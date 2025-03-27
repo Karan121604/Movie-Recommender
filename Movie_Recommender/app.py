@@ -1,3 +1,4 @@
+import os
 import pickle
 import streamlit as st
 import requests
@@ -36,8 +37,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-movies = pickle.load(open('../MOVIE-RECOMMANDATION/modal/movie_list.pkl', 'rb'))
-similarity = pickle.load(open('../MOVIE-RECOMMANDATION/modal/similarity.pkl', 'rb'))
+# Define the correct file paths
+movie_list_path = os.path.join(os.path.dirname(__file__), "modal", "movie_list.pkl")
+similarity_path = os.path.join(os.path.dirname(__file__), "modal", "similarity.pkl")
+
+# Check if files exist before loading
+if not os.path.exists(movie_list_path) or not os.path.exists(similarity_path):
+    st.error("Required files not found. Ensure 'movie_list.pkl' and 'similarity.pkl' exist in the 'modal' folder.")
+    st.stop()
+
+movies = pickle.load(open(movie_list_path, 'rb'))
+similarity = pickle.load(open(similarity_path, 'rb'))
 
 st.markdown('<p class="big-font">🎬 Movie Recommender System 🍿</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-text">Find movies similar to your favorites!</p>', unsafe_allow_html=True)
@@ -59,4 +69,3 @@ if st.button('🔍 Show Recommendation'):
         with col:
             st.write(f"**{recommended_movie_names[i]}**")  # Fixing the movie name display
             st.image(recommended_movie_posters[i], width=200)
-
